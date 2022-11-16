@@ -13,6 +13,7 @@
         <java.version>17</java.version>
         <javafx.version>17.0.0.1</javafx.version>
         <jmetro.version>11.6.15</jmetro.version>
+        <tnylog.version>2.5.0</tnylog.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
@@ -45,6 +46,16 @@
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
+		</dependency>
+		<dependency>
+		    <groupId>org.tinylog</groupId>
+		    <artifactId>tinylog-api</artifactId>
+		    <version>${tnylog.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.tinylog</groupId>
+		    <artifactId>tinylog-impl</artifactId>
+		    <version>${tnylog.version}</version>
 		</dependency>
     </dependencies>
 

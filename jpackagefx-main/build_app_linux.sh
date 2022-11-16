@@ -13,7 +13,7 @@ JAVA_VERSION=17
 MAIN_JAR="main-ui-$PROJECT_VERSION.jar"
 
 # Set desired installer type: "app-image", "rpm" or "deb".
-INSTALLER_TYPE=rpm
+INSTALLER_TYPE=app-image
 
 echo "java home: $JAVA_HOME"
 echo "project version: $PROJECT_VERSION"
@@ -77,7 +77,7 @@ $JAVA_HOME/bin/jlink \
   --compress=2  \
   --strip-debug \
   --add-modules "${detected_modules}${manual_modules}" \
-  --include-locales=en,de \
+  --include-locales=en,fr \
   --output target/java-runtime
 
 # ------ PACKAGING ----------------------------------------------------------

@@ -7,6 +7,8 @@ package com.dlsc.jpackagefx;
 
 import java.util.Locale;
 
+import org.tinylog.Logger;
+
 import com.dlsc.jpackage.module1.ModuleLabel1;
 import com.dlsc.jpackage.module2.ModuleLabel2;
 
@@ -27,6 +29,9 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+    	
+    	Logger.debug("App is Starting !");
+    	
         Label defaultLocaleLabel = new Label(Locale.getDefault().getDisplayLanguage());
         ModuleLabel1 label1 = new ModuleLabel1();
         ModuleLabel2 label2 = new ModuleLabel2();
