@@ -9,11 +9,11 @@
 # PROJECT_VERSION: version used in pom.xml, e.g. 1.0-SNAPSHOT
 # APP_VERSION: the application version, e.g. 1.0.0, shown in "about" dialog
 
-JAVA_VERSION=17
-MAIN_JAR="main-ui-$PROJECT_VERSION.jar"
+# JAVA_VERSION=17
+# MAIN_JAR="main-ui-$PROJECT_VERSION.jar"
 
 # Set desired installer type: "app-image", "rpm" or "deb".
-INSTALLER_TYPE=app-image
+# INSTALLER_TYPE=app-image
 
 echo "java home: $JAVA_HOME"
 echo "project version: $PROJECT_VERSION"
@@ -30,7 +30,7 @@ rm -rfd target/installer/
 mkdir -p target/installer/input/libs/
 
 cp target/libs/* target/installer/input/libs/
-cp target/${MAIN_JAR} target/installer/input/libs/
+# cp target/${MAIN_JAR} target/installer/input/libs/
 
 # ------ REQUIRED MODULES ---------------------------------------------------
 # Use jlink to detect all modules that are required to run the application.
@@ -40,11 +40,13 @@ cp target/${MAIN_JAR} target/installer/input/libs/
 echo "detecting required modules"
 detected_modules=`$JAVA_HOME/bin/jdeps \
   -q \
+  -recursive \
   --multi-release ${JAVA_VERSION} \
   --ignore-missing-deps \
   --print-module-deps \
-  --class-path "target/installer/input/libs/*" \
-    target/classes/com/dlsc/jpackagefx/App.class`
+  --module-path "mods:target/installer/input/libs" \
+  	target/libs/${MAIN_JAR}`
+#    target/classes/com/dlsc/jpackagefx/App.class`
 echo "detected modules: ${detected_modules}"
 
 
@@ -60,7 +62,7 @@ echo "detected modules: ${detected_modules}"
 #
 # Don't forget the leading ','!
 
-manual_modules=,jdk.crypto.ec,jdk.localedata
+manual_modules=,jdk.crypto.ec,jdk.localedata,org.jfxtras.styles.jmetro,org.tinylog.api
 echo "manual modules: ${manual_modules}"
 
 # ------ RUNTIME IMAGE ------------------------------------------------------
@@ -77,6 +79,7 @@ $JAVA_HOME/bin/jlink \
   --compress=2  \
   --strip-debug \
   --add-modules "${detected_modules}${manual_modules}" \
+  --module-path "mods:target/installer/input/libs" \
   --include-locales=en,fr \
   --output target/java-runtime
 
@@ -90,7 +93,7 @@ $JAVA_HOME/bin/jpackage \
 --dest target/installer \
 --input target/installer/input/libs \
 --name JPackageScriptFX \
---main-class com.dlsc.jpackagefx.AppLauncher \
+--main-class fxlauncher.Start \
 --main-jar ${MAIN_JAR} \
 --java-options -Xmx2048m \
 --runtime-image target/java-runtime \

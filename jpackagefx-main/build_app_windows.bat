@@ -9,11 +9,16 @@ rem
 rem PROJECT_VERSION: version used in pom.xml, e.g. 1.0-SNAPSHOT
 rem APP_VERSION: the application version, e.g. 1.0.0, shown in "about" dialog
 
-set JAVA_VERSION=17
-set MAIN_JAR=main-ui-%PROJECT_VERSION%.jar
+rem set JAVA_VERSION=17
+rem set MAIN_JAR=main-ui-%PROJECT_VERSION%.jar
 
 rem Set desired installer type: "app-image" "msi" "exe".
-set INSTALLER_TYPE=msi
+rem set INSTALLER_TYPE=msi
+
+echo java home: %JAVA_HOME%
+echo project version: %PROJECT_VERSION%
+echo app version: %APP_VERSION%
+echo main JAR file: %MAIN_JAR%
 
 rem ------ SETUP DIRECTORIES AND FILES ----------------------------------------
 rem Remove previously generated java runtime and installers. Copy all required
@@ -23,7 +28,7 @@ IF EXIST target\java-runtime rmdir /S /Q  .\target\java-runtime
 IF EXIST target\installer rmdir /S /Q target\installer
 
 xcopy /S /Q target\libs\* target\installer\input\libs\
-copy target\%MAIN_JAR% target\installer\input\libs\
+rem copy target\%MAIN_JAR% target\installer\input\libs\
 
 rem ------ REQUIRED MODULES ---------------------------------------------------
 rem Use jlink to detect all modules that are required to run the application.
@@ -34,10 +39,11 @@ echo detecting required modules
 
 "%JAVA_HOME%\bin\jdeps" ^
   -q ^
+  -recursive ^
   --multi-release %JAVA_VERSION% ^
   --ignore-missing-deps ^
-  --class-path "target\installer\input\libs\*" ^
-  --print-module-deps target\classes\com\dlsc\jpackagefx\App.class > temp.txt
+  --module-path "mods:target/installer/input/libs" ^
+  --print-module-deps target\libs\${MAIN_JAR} > temp.txt
 
 set /p detected_modules=<temp.txt
 
@@ -55,7 +61,7 @@ rem e.g., --include-locales=en,de.
 rem
 rem Don't forget the leading ','!
 
-set manual_modules=,jdk.crypto.ec,jdk.localedata
+set manual_modules=,jdk.crypto.ec,jdk.localedata,org.jfxtras.styles.jmetro,org.tinylog.api
 echo manual modules: %manual_modules%
 
 rem ------ RUNTIME IMAGE ------------------------------------------------------
@@ -73,6 +79,7 @@ call "%JAVA_HOME%\bin\jlink" ^
   --compress=2 ^
   --strip-debug ^
   --add-modules %detected_modules%%manual_modules% ^
+  --module-path "mods:target/installer/input/libs" ^
   --include-locales=en,de ^
   --output target/java-runtime
 
@@ -85,7 +92,7 @@ call "%JAVA_HOME%\bin\jpackage" ^
   --dest target/installer ^
   --input target/installer/input/libs ^
   --name JPackageScriptFX ^
-  --main-class com.dlsc.jpackagefx.AppLauncher ^
+  --main-class fxlauncher.Start ^
   --main-jar %MAIN_JAR% ^
   --java-options -Xmx2048m ^
   --runtime-image target/java-runtime ^

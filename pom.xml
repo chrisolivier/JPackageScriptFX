@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.dlsc.jpackagefx</groupId>
     <artifactId>parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.4-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
-        <javafx.version>17.0.0.1</javafx.version>
+        <javafx.version>18</javafx.version>
         <jmetro.version>11.6.15</jmetro.version>
         <tnylog.version>2.5.0</tnylog.version>
         <maven.compiler.source>11</maven.compiler.source>
@@ -30,6 +30,16 @@
             <artifactId>javafx-controls</artifactId>
             <version>${javafx.version}</version>
         </dependency>
+		<dependency>
+		    <groupId>org.openjfx</groupId>
+		    <artifactId>javafx-web</artifactId>
+		    <version>${javafx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-fxml</artifactId>
+			<version>${javafx.version}</version>
+		</dependency>
 		<dependency>
 		    <groupId>org.jfxtras</groupId>
 		    <artifactId>jmetro</artifactId>

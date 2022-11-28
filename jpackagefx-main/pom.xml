@@ -8,12 +8,48 @@
     <properties>
         <client.version>1.0.0</client.version>
         <exec.maven.plugin.version>1.6.0</exec.maven.plugin.version>
+        <fxlauncher.version>1.0.23-SNAPSHOT</fxlauncher.version>
+        
+        <!-- tornado properties -->
+        <!-- Installer Filename without suffix -->
+        <app.filename>JPackageScriptFX</app.filename>
+
+        <!-- The JavaFX Application class name -->
+        <app.mainClass>com.dlsc.jpackagefx.App</app.mainClass>
+
+        <!-- Optional override to specify where the cached files are stored. Default is current working directory -->
+        <!-- app.cacheDir>USERLIB/JPackageScriptFX</app.cacheDir -->
+        <app.cacheDir>../lib/app</app.cacheDir>
+
+        <!-- Optional parameters to the application, will be embedded in the launcher and can be overriden on the command line -->
+        <app.parameters>--myOption=myValue --myOtherOption=myOtherValue</app.parameters>
+
+        <!-- The Application vendor used by javapackager -->
+        <app.vendor>Acme Inc</app.vendor>
+
+        <!-- The Application version used by javapackager -->
+        <app.version>1.0.0</app.version>
+
+        <!-- Base URL where you will host the application artifacts -->
+        <app.url>http://192.168.22.65:8080/</app.url>
+
+        <!-- Optional scp target for application artifacts hosted at the above url -->
+        <app.deploy.target>batchoperator@192.168.22.65:www</app.deploy.target>
+
+        <!-- The app and launcher will be assembled in this folder -->
+        <app.dir>${project.build.directory}/libs</app.dir>
+
+        <!-- Native installers will be built in this folder -->
+        <app.installerdir>${project.build.directory}/installer2</app.installerdir>
+
+        <!-- Should the client downgrade if the server version is older than the local version? -->
+        <app.acceptDowngrade>false</app.acceptDowngrade>
     </properties>
 
     <parent>
         <groupId>com.dlsc.jpackagefx</groupId>
         <artifactId>parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.4-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -21,27 +57,34 @@
         <dependency>
             <groupId>com.dlsc.jpackagefx</groupId>
             <artifactId>module1</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.4-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>com.dlsc.jpackagefx</groupId>
             <artifactId>module2</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.4-SNAPSHOT</version>
         </dependency>
-    </dependencies>
+        
+        <dependency>
+            <groupId>no.tornado</groupId>
+            <artifactId>fxlauncher</artifactId>
+            <version>${fxlauncher.version}</version>
+        </dependency>
 
+    </dependencies>
+    
     <build>
 
         <plugins>
-            <plugin>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.8</version>
-                <configuration>
-                    <mainClass>com.dlsc.jpackagefx.App</mainClass>
-                </configuration>
-            </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.0.2</version>
+				<configuration>
+					<outputDirectory>${app.dir}</outputDirectory>
+				</configuration>
+			</plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -55,17 +98,78 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/libs</outputDirectory>
+                            <outputDirectory>${app.dir}</outputDirectory>
                             <overWriteReleases>false</overWriteReleases>
                             <overWriteSnapshots>false</overWriteSnapshots>
                             <overWriteIfNewer>true</overWriteIfNewer>
                             <includeScope>compile</includeScope>
                             <includeScope>runtime</includeScope>
+                            <excludeScope>provided</excludeScope>
+                            <stripVersion>true</stripVersion>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <artifactId>exec-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <version>${exec.maven.plugin.version}</version>
+                <executions>
+                    <!-- Generate app.xml manifest -->
+                    <execution>
+                        <id>create-manifest</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>fxlauncher.CreateManifest</mainClass>
+                            <arguments>
+                                <argument>${app.url}</argument>
+                                <argument>${app.mainClass}</argument>
+                                <argument>${app.dir}</argument>
+                                <argument>--cache-dir=${app.cacheDir}</argument>
+                                <argument>--accept-downgrade=${app.acceptDowngrade}</argument>
+                                <argument>--include-extensions=jpg</argument>
+                                <argument>${app.parameters}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <!-- Embed app.xml inside fxlauncher.xml so we don't need to reference app.xml to start the app -->
+                    <execution>
+                        <id>embed-manifest-in-launcher</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>jar</executable>
+                            <workingDirectory>${app.dir}</workingDirectory>
+                            <arguments>
+                                <argument>uf</argument>
+                                <argument>fxlauncher.jar</argument>
+                                <argument>app.xml</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <!-- Copy application artifacts to remote site using scp (optional) -->
+                    <execution>
+                        <id>deploy-app</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>scp</executable>
+                            <arguments>
+                                <argument>-r</argument>
+                                <argument>target/libs/.</argument>
+                                <argument>${app.deploy.target}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -96,12 +200,12 @@
                             <workingDirectory>${project.basedir}</workingDirectory>
                             <executable>./build_app_mac.sh</executable>
                             <environmentVariables>
-                                <APP_VERSION>
-                                    ${client.version}
-                                </APP_VERSION>
-                                <PROJECT_VERSION>
-                                    ${project.version}
-                                </PROJECT_VERSION>
+                            	<JAVA_VERSION>17</JAVA_VERSION>
+                            	<INSTALLER_TYPE>pkg</INSTALLER_TYPE>
+                            	<MAIN_JAR>fxlauncher.jar</MAIN_JAR>
+                            	<MAIN_CLASS>fxlauncher.Start</MAIN_CLASS>
+                                <APP_VERSION>${client.version}</APP_VERSION>
+                                <PROJECT_VERSION>${project.version}</PROJECT_VERSION>
                             </environmentVariables>
                         </configuration>
                     </plugin>
@@ -122,27 +226,27 @@
                         <artifactId>exec-maven-plugin</artifactId>
                         <groupId>org.codehaus.mojo</groupId>
                         <version>${exec.maven.plugin.version}</version>
-                        <executions>
+                        <executions>	                    
                             <execution>
                                 <id>Build Native Linux App</id>
                                 <phase>install</phase>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
+		                        <configuration>
+		                            <workingDirectory>${project.basedir}</workingDirectory>
+		                            <executable>./build_app_linux.sh</executable>
+		                            <environmentVariables>
+		                            	<JAVA_VERSION>17</JAVA_VERSION>
+		                            	<INSTALLER_TYPE>app-image</INSTALLER_TYPE>
+		                            	<MAIN_JAR>fxlauncher.jar</MAIN_JAR>
+		                            	<MAIN_CLASS>fxlauncher.Start</MAIN_CLASS>
+		                                <APP_VERSION>${client.version}</APP_VERSION>
+		                                <PROJECT_VERSION>${project.version}</PROJECT_VERSION>
+		                            </environmentVariables>
+		                        </configuration>                                
                             </execution>
                         </executions>
-                        <configuration>
-                            <workingDirectory>${project.basedir}</workingDirectory>
-                            <executable>./build_app_linux.sh</executable>
-                            <environmentVariables>
-                                <APP_VERSION>
-                                    ${client.version}
-                                </APP_VERSION>
-                                <PROJECT_VERSION>
-                                    ${project.version}
-                                </PROJECT_VERSION>
-                            </environmentVariables>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -174,12 +278,12 @@
                             <workingDirectory>${project.basedir}</workingDirectory>
                             <executable>build_app_windows.bat</executable>
                             <environmentVariables>
-                                <APP_VERSION>
-                                    ${client.version}
-                                </APP_VERSION>
-                                <PROJECT_VERSION>
-                                    ${project.version}
-                                </PROJECT_VERSION>
+                            	<JAVA_VERSION>17</JAVA_VERSION>
+                            	<INSTALLER_TYPE>msi</INSTALLER_TYPE>
+                            	<MAIN_JAR>fxlauncher.jar</MAIN_JAR>
+                            	<MAIN_CLASS>fxlauncher.Start</MAIN_CLASS>
+                                <APP_VERSION>${client.version}</APP_VERSION>
+                                <PROJECT_VERSION>${project.version}</PROJECT_VERSION>
                             </environmentVariables>
                         </configuration>
                     </plugin>
