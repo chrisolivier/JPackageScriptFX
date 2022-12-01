@@ -110,6 +110,7 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- FXLauncher -->
             <plugin>
                 <artifactId>exec-maven-plugin</artifactId>
                 <groupId>org.codehaus.mojo</groupId>
