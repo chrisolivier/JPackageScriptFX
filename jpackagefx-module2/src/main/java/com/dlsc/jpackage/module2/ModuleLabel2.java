@@ -5,6 +5,6 @@ import javafx.scene.control.Label;
 public class ModuleLabel2 extends Label {
 
     public ModuleLabel2() {
-        super("Module Label 2-1-2");
+        super("Module Label 2-1-3");
     }
 }

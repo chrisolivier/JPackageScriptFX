@@ -25,6 +25,9 @@
 
         <!-- The Application version used by javapackager -->
         <app.version>1.0.0</app.version>
+        
+        <!-- Optional override to specify where the cached files are stored. Default is current working directory -->
+		<app.cacheDir>USERLIB/JPackageScriptFX</app.cacheDir>
 
         <!-- Base URL where you will host the application artifacts -->
         <app.url>http://staging.colhome.org:8080/</app.url>
@@ -71,7 +74,7 @@
     </dependencies>
     
     <build>
-
+		<finalName>${project.artifactId}</finalName>
         <plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -166,12 +169,11 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>           
         </plugins>
     </build>
 
     <profiles>
-    <!-- to be tested -->
         <profile>
             <id>build-mac</id>
 
@@ -179,12 +181,6 @@
                 <os><family>mac</family></os>
             </activation>
             
-            <properties>
-		        <!-- Optional override to specify where the cached files are stored. Default is current working directory -->
-		        <!-- app.cacheDir>USERLIB/JPackageScriptFX</app.cacheDir -->
-		        <app.cacheDir>../lib/app</app.cacheDir>            
-            </properties>
-
             <build>
                 <plugins>
                     <plugin>
@@ -224,12 +220,6 @@
                 <os><family>linux</family></os>
             </activation>
             
-            <properties>
-		        <!-- Optional override to specify where the cached files are stored. Default is current working directory -->
-		        <!-- app.cacheDir>USERLIB/JPackageScriptFX</app.cacheDir -->
-		        <app.cacheDir>../lib/app</app.cacheDir>            
-            </properties>
-
             <build>
                 <plugins>
                     <plugin>
@@ -270,12 +260,6 @@
                 <os><family>windows</family></os>
             </activation>
             
-            <properties>
-		        <!-- Optional override to specify where the cached files are stored. Default is current working directory -->
-		        <!-- app.cacheDir>USERLIB/JPackageScriptFX</app.cacheDir -->
-		        <app.cacheDir>app</app.cacheDir>            
-            </properties>
-
             <build>
                 <plugins>
                     <plugin>

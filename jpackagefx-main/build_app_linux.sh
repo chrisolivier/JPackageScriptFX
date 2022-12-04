@@ -29,7 +29,15 @@ rm -rfd target/installer/
 
 mkdir -p target/installer/input/libs/
 
-cp target/libs/* target/installer/input/libs/
+# cp target/libs/* target/installer/input/libs/
+cp target/libs/javafx* target/installer/input/libs/
+cp target/libs/jakarta* target/installer/input/libs/
+cp target/libs/jaxb* target/installer/input/libs/
+cp target/libs/angus-activation.jar target/installer/input/libs/
+cp target/libs/fxlauncher.jar target/installer/input/libs/
+cp target/libs/tinylog* target/installer/input/libs/
+
+
 # cp target/${MAIN_JAR} target/installer/input/libs/
 
 # ------ REQUIRED MODULES ---------------------------------------------------
@@ -45,7 +53,7 @@ detected_modules=`$JAVA_HOME/bin/jdeps \
   --ignore-missing-deps \
   --print-module-deps \
   --module-path "mods:target/installer/input/libs" \
-  	target/libs/${MAIN_JAR}`
+  	target/installer/input/libs/${MAIN_JAR}`
 #    target/classes/com/dlsc/jpackagefx/App.class`
 echo "detected modules: ${detected_modules}"
 
@@ -62,7 +70,8 @@ echo "detected modules: ${detected_modules}"
 #
 # Don't forget the leading ','!
 
-manual_modules=,jdk.crypto.ec,jdk.localedata,org.jfxtras.styles.jmetro,org.tinylog.api
+# manual_modules=,jdk.crypto.ec,jdk.localedata,org.jfxtras.styles.jmetro,org.tinylog.api
+manual_modules=,jdk.crypto.ec,jdk.localedata,org.tinylog.api
 echo "manual modules: ${manual_modules}"
 
 # ------ RUNTIME IMAGE ------------------------------------------------------
