@@ -175,6 +175,7 @@
     </build>
 
     <profiles>
+    <!-- to be tested -->
         <profile>
             <id>build-mac</id>
 
@@ -253,6 +254,7 @@
             </build>
         </profile>
 
+		<!-- to be tested -->
         <profile>
             <id>build-windows</id>
 
