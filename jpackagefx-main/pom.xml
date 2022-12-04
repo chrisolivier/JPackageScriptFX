@@ -17,10 +17,6 @@
         <!-- The JavaFX Application class name -->
         <app.mainClass>com.dlsc.jpackagefx.App</app.mainClass>
 
-        <!-- Optional override to specify where the cached files are stored. Default is current working directory -->
-        <!-- app.cacheDir>USERLIB/JPackageScriptFX</app.cacheDir -->
-        <app.cacheDir>../lib/app</app.cacheDir>
-
         <!-- Optional parameters to the application, will be embedded in the launcher and can be overriden on the command line -->
         <app.parameters>--myOption=myValue --myOtherOption=myOtherValue</app.parameters>
 
@@ -182,6 +178,12 @@
             <activation>
                 <os><family>mac</family></os>
             </activation>
+            
+            <properties>
+		        <!-- Optional override to specify where the cached files are stored. Default is current working directory -->
+		        <!-- app.cacheDir>USERLIB/JPackageScriptFX</app.cacheDir -->
+		        <app.cacheDir>../lib/app</app.cacheDir>            
+            </properties>
 
             <build>
                 <plugins>
@@ -221,6 +223,12 @@
             <activation>
                 <os><family>linux</family></os>
             </activation>
+            
+            <properties>
+		        <!-- Optional override to specify where the cached files are stored. Default is current working directory -->
+		        <!-- app.cacheDir>USERLIB/JPackageScriptFX</app.cacheDir -->
+		        <app.cacheDir>../lib/app</app.cacheDir>            
+            </properties>
 
             <build>
                 <plugins>
@@ -261,6 +269,12 @@
             <activation>
                 <os><family>windows</family></os>
             </activation>
+            
+            <properties>
+		        <!-- Optional override to specify where the cached files are stored. Default is current working directory -->
+		        <!-- app.cacheDir>USERLIB/JPackageScriptFX</app.cacheDir -->
+		        <app.cacheDir>app</app.cacheDir>            
+            </properties>
 
             <build>
                 <plugins>

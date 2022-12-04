@@ -42,8 +42,8 @@ echo detecting required modules
   -recursive ^
   --multi-release %JAVA_VERSION% ^
   --ignore-missing-deps ^
-  --module-path "mods:target/installer/input/libs" ^
-  --print-module-deps target\libs\${MAIN_JAR} > temp.txt
+  --module-path "mods;target/installer/input/libs" ^
+  --print-module-deps target\libs\%MAIN_JAR% > temp.txt
 
 set /p detected_modules=<temp.txt
 
@@ -79,7 +79,7 @@ call "%JAVA_HOME%\bin\jlink" ^
   --compress=2 ^
   --strip-debug ^
   --add-modules %detected_modules%%manual_modules% ^
-  --module-path "mods:target/installer/input/libs" ^
+  --module-path "mods;target/installer/input/libs" ^
   --include-locales=en,de ^
   --output target/java-runtime
 
