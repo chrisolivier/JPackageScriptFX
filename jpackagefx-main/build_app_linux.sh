@@ -36,6 +36,7 @@ cp target/libs/jaxb* target/installer/input/libs/
 cp target/libs/angus-activation.jar target/installer/input/libs/
 cp target/libs/fxlauncher.jar target/installer/input/libs/
 cp target/libs/tinylog* target/installer/input/libs/
+cp target/libs/jmetro.jar target/installer/input/libs/
 
 
 # cp target/${MAIN_JAR} target/installer/input/libs/

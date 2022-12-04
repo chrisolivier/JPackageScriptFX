@@ -27,14 +27,18 @@ rem jar files into the input/libs folder.
 IF EXIST target\java-runtime rmdir /S /Q  .\target\java-runtime
 IF EXIST target\installer rmdir /S /Q target\installer
 
+echo java-runtime and installer dir were deleted
+
 rem xcopy /S /Q target\libs\* target\installer\input\libs\
 rem copy target\%MAIN_JAR% target\installer\input\libs\
-copy target/libs/javafx* target/installer/input/libs/
-copy target/libs/jakarta* target/installer/input/libs/
-copy target/libs/jaxb* target/installer/input/libs/
-copy target/libs/angus-activation.jar target/installer/input/libs/
-copy target/libs/fxlauncher.jar target/installer/input/libs/
-copy target/libs/tinylog* target/installer/input/libs/
+xcopy /S /Q target\libs\javafx* target\installer\input\libs\
+echo xcopy done
+copy target\libs\jakarta* target\installer\input\libs\
+copy target\libs\jaxb* target\installer\input\libs\
+copy target\libs\angus-activation.jar target\installer\input\libs\
+copy target\libs\fxlauncher.jar target\installer\input\libs\
+copy target\libs\tinylog* target\installer\input\libs\
+copy target\libs\jmetro.jar target\installer\input\libs\
 
 rem ------ REQUIRED MODULES ---------------------------------------------------
 rem Use jlink to detect all modules that are required to run the application.
