@@ -4,6 +4,33 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>main-ui</artifactId>
     <packaging>jar</packaging>
+    
+    <parent>
+        <groupId>com.dlsc.jpackagefx</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.0.4-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.dlsc.jpackagefx</groupId>
+            <artifactId>module1</artifactId>
+            <version>1.0.4-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.dlsc.jpackagefx</groupId>
+            <artifactId>module2</artifactId>
+            <version>1.0.4-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.colhome</groupId>
+            <artifactId>fxlauncher</artifactId>
+            <version>${fxlauncher.version}</version>
+        </dependency>
+    </dependencies>
 
     <properties>
         <client.version>1.0.0</client.version>
@@ -39,41 +66,15 @@
         <app.dir>${project.build.directory}/libs</app.dir>
 
         <!-- Native installers will be built in this folder -->
-        <app.installerdir>${project.build.directory}/installer2</app.installerdir>
+        <app.installerdir>${project.build.directory}/installer</app.installerdir>
 
         <!-- Should the client downgrade if the server version is older than the local version? -->
         <app.acceptDowngrade>false</app.acceptDowngrade>
     </properties>
 
-    <parent>
-        <groupId>com.dlsc.jpackagefx</groupId>
-        <artifactId>parent</artifactId>
-        <version>1.0.4-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.dlsc.jpackagefx</groupId>
-            <artifactId>module1</artifactId>
-            <version>1.0.4-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.dlsc.jpackagefx</groupId>
-            <artifactId>module2</artifactId>
-            <version>1.0.4-SNAPSHOT</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.colhome</groupId>
-            <artifactId>fxlauncher</artifactId>
-            <version>${fxlauncher.version}</version>
-        </dependency>
-
-    </dependencies>
-    
     <build>
+    
+    	<!-- main-ui.jar  -->
 		<finalName>${project.artifactId}</finalName>
         <plugins>
 			<plugin>
@@ -85,6 +86,7 @@
 				</configuration>
 			</plugin>
 
+			<!-- Gather main-ui dependecies -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -109,7 +111,8 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- FXLauncher -->
+            
+            <!-- FXLauncher preparation -->
             <plugin>
                 <artifactId>exec-maven-plugin</artifactId>
                 <groupId>org.codehaus.mojo</groupId>
@@ -173,12 +176,20 @@
         </plugins>
     </build>
 
+
+	<!-- Native launcher Build																-->
+	<!-- mvn clean install -Dnative															--> 
+	<!-- The launcher need to be built once for each os 									-->
+	<!-- No need to build it each time as the launcher will receive update automatically 	-->
     <profiles>
         <profile>
             <id>build-mac</id>
 
             <activation>
                 <os><family>mac</family></os>
+				<property>
+				    <name>native</name>
+				</property> 
             </activation>
             
             <build>
@@ -218,8 +229,11 @@
 
             <activation>
                 <os><family>linux</family></os>
+				<property>
+				    <name>native</name>
+				</property>                
             </activation>
-            
+            mvn
             <build>
                 <plugins>
                     <plugin>
@@ -252,12 +266,14 @@
             </build>
         </profile>
 
-		<!-- to be tested -->
         <profile>
             <id>build-windows</id>
 
             <activation>
                 <os><family>windows</family></os>
+				<property>
+				    <name>native</name>
+				</property> 
             </activation>
             
             <build>
