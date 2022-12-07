@@ -1,58 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<!-- parent>
-		<artifactId>parent</artifactId>
-		<groupId>com.dlsc.jpackagefx</groupId>
-		<version>1.0.4-SNAPSHOT</version>
-	</parent -->
 
 	<groupId>com.dlsc.jpackagefx</groupId>
 	<artifactId>jpackagefx-launcher</artifactId>
 	<version>1.0.4-SNAPSHOT</version>
 
 	<name>jpackagefx-launcher</name>
-	<!-- FIXME change it to the project's website -->
-	<url>http://www.example.com</url>
 
 	<properties>
 		<javafx.version>18</javafx.version>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
-		<!-- client.version>1.0.0</client.version -->
+		
 		<exec.maven.plugin.version>1.6.0</exec.maven.plugin.version>
 		<fxlauncher.version>1.0.0-SNAPSHOT</fxlauncher.version>
 
 		<!-- tornado properties -->
 		<!-- Installer Filename without suffix -->
-		<app.filename>JPackageScriptFX</app.filename>
-
-		<!-- The JavaFX Application class name -->
-		<app.mainClass>com.dlsc.jpackagefx.App</app.mainClass>
+		<app.name>JPackageScriptFX</app.name>
 
 		<!-- The Application vendor used by javapackager -->
-		<!-- app.vendor>Acme Inc</app.vendor -->
+		<app.vendor>Acme Inc.</app.vendor>
 
 		<!-- The Application version used by javapackager -->
 		<app.version>1.0.0</app.version>
 
-		<!-- Optional override to specify where the cached files are stored. Default is current working directory -->
-		<app.cacheDir>USERLIB/JPackageScriptFX</app.cacheDir>
-
 		<!-- Base URL where you will host the application artifacts -->
 		<app.url>http://staging.colhome.org:8080/</app.url>
-
-		<!-- Optional scp target for application artifacts hosted at the above url -->
-		<app.deploy.target>batchoperator@staging.colhome.org:www</app.deploy.target>
 
 		<!-- The app and launcher will be assembled in this folder -->
 		<app.dir>${project.build.directory}/libs</app.dir>
 
 		<!-- Native installers will be built in this folder -->
 		<app.installerdir>${project.build.directory}/installer</app.installerdir>
-
-		<!-- Should the client downgrade if the server version is older than the local version? -->
-		<app.acceptDowngrade>false</app.acceptDowngrade>
 	</properties>
 
 	<dependencies>
@@ -60,6 +41,7 @@
 			<groupId>org.colhome</groupId>
 			<artifactId>fxlauncher</artifactId>
 			<version>${fxlauncher.version}</version>
+			<!-- this package is not usefull at rune time, we remove it from the native launcher -->
 			<exclusions>
 				<exclusion>
 					<groupId>com.google.auto.service</groupId>
@@ -107,9 +89,6 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<!-- ignoredDependencies>
-								<ignoredDependency>com.google.auto.service:auto-service-annotations</ignoredDependency>
-							</ignoredDependencies -->
 							<outputDirectory>${app.dir}</outputDirectory>
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
@@ -122,19 +101,17 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- Get the app.xml from remote app -->
+			<!-- Get the app.xml from remote app, the app has to be built before this launcher -->
 			<plugin>
 				<groupId>com.googlecode.maven-download-plugin</groupId>
 				<artifactId>download-maven-plugin</artifactId>
 				<version>1.6.8</version>
 				<executions>
 					<execution>
-						<!-- the wget goal actually binds itself to this phase by default -->
 						<phase>compile</phase>
 						<goals>
 							<goal>wget</goal>
 						</goals>
-
 					</execution>
 				</executions>
 				<configuration>
@@ -171,7 +148,6 @@
 	</build>
 
 	<!-- Native launcher Build																-->
-	<!-- mvn clean install -Dnative															-->
 	<!-- The launcher need to be built once for each os 									-->
 	<!-- No need to build it each time as the launcher will receive update automatically 	-->
 	<profiles>
@@ -205,10 +181,15 @@
 							<environmentVariables>
 								<JAVA_VERSION>17</JAVA_VERSION>
 								<INSTALLER_TYPE>pkg</INSTALLER_TYPE>
-								<MAIN_JAR>fxlauncher.jar</MAIN_JAR>
-								<MAIN_CLASS>fxlauncher.Start</MAIN_CLASS>
+								<APP_NAME>${app.name}</APP_NAME>
+								<APP_DIR>${app.dir}</APP_DIR>
+								<INSTALL_DIR>${app.installerdir}</INSTALL_DIR>
+								<APP_ICON>src/main/logo/macosx/duke.icns</APP_ICON>
 								<APP_VERSION>${app.version}</APP_VERSION>
-								<PROJECT_VERSION>${app.version}</PROJECT_VERSION>
+								<PROJECT_VERSION>${project.version}</PROJECT_VERSION>
+								<VENDOR>${app.vendor}</VENDOR>
+								<PKG_IDENTIFIER>com.acme.app</PKG_IDENTIFIER>
+								<PKG_NAME>ACME</PKG_NAME>
 							</environmentVariables>
 						</configuration>
 					</plugin>
@@ -246,10 +227,13 @@
 							<environmentVariables>
 								<JAVA_VERSION>17</JAVA_VERSION>
 								<INSTALLER_TYPE>app-image</INSTALLER_TYPE>
-								<MAIN_JAR>fxlauncher.jar</MAIN_JAR>
-								<MAIN_CLASS>fxlauncher.Start</MAIN_CLASS>
+								<APP_NAME>${app.name}</APP_NAME>
+								<APP_DIR>${app.dir}</APP_DIR>
+								<INSTALL_DIR>${app.installerdir}</INSTALL_DIR>
+								<APP_ICON>src/main/logo/linux/duke.png</APP_ICON>
 								<APP_VERSION>${app.version}</APP_VERSION>
-								<PROJECT_VERSION>${app.version}</PROJECT_VERSION>
+								<PROJECT_VERSION>${project.version}</PROJECT_VERSION>
+								<VENDOR>${app.vendor}</VENDOR>
 							</environmentVariables>
 						</configuration>
 					</plugin>
@@ -287,10 +271,13 @@
 							<environmentVariables>
 								<JAVA_VERSION>17</JAVA_VERSION>
 								<INSTALLER_TYPE>msi</INSTALLER_TYPE>
-								<MAIN_JAR>fxlauncher.jar</MAIN_JAR>
-								<MAIN_CLASS>fxlauncher.Start</MAIN_CLASS>
+								<APP_NAME>${app.name}</APP_NAME>
+								<APP_DIR>${app.dir}</APP_DIR>
+								<INSTALL_DIR>${app.installerdir}</INSTALL_DIR>
+								<APP_ICON>src/main/logo/windows/duke.ico</APP_ICON>
 								<APP_VERSION>${app.version}</APP_VERSION>
-								<PROJECT_VERSION>${app.version}</PROJECT_VERSION>
+								<PROJECT_VERSION>${project.version}</PROJECT_VERSION>
+								<VENDOR>${app.vendor}</VENDOR>
 							</environmentVariables>
 						</configuration>
 					</plugin>

@@ -9,27 +9,37 @@ rem
 rem PROJECT_VERSION: version used in pom.xml, e.g. 1.0-SNAPSHOT
 rem APP_VERSION: the application version, e.g. 1.0.0, shown in "about" dialog
 
-rem set JAVA_VERSION=17
-rem set MAIN_JAR=main-ui-%PROJECT_VERSION%.jar
+set MAIN_JAR="fxlauncher.jar"
+set MAIN_CLASS="fxlauncher.Start"
 
 rem Set desired installer type: "app-image" "msi" "exe".
-rem set INSTALLER_TYPE=msi
 
 echo java home: %JAVA_HOME%
 echo project version: %PROJECT_VERSION%
 echo app version: %APP_VERSION%
 echo main JAR file: %MAIN_JAR%
 
+echo "java home			: %JAVA_HOME%"
+echo "java version		: %JAVA_VERSION%"
+echo "intaller type		: %INSTALLER_TYPE%"
+echo "app name			: %APP_NAME%"
+echo "app dir			: %APP_DIR%"
+echo "install dir		: %INSTALL_DIR%"
+echo "app icon			: %APP_ICON%"
+echo "project version	: %PROJECT_VERSION%"
+echo "app version		: %APP_VERSION%"
+echo "main JAR file		: %MAIN_JAR%"
+echo "main JAR file		: %MAIN_CLASS%"
+echo "vendor			: %VENDOR%"
+
 rem ------ SETUP DIRECTORIES AND FILES ----------------------------------------
 rem Remove previously generated java runtime and installers. Copy all required
 rem jar files into the input/libs folder.
 
 IF EXIST target\java-runtime rmdir /S /Q  .\target\java-runtime
-IF EXIST target\installer rmdir /S /Q target\installer
+IF EXIST %INSTALL_DIR% rmdir /S /Q %INSTALL_DIR%
 
-echo java-runtime and installer dir were deleted
-
-xcopy /S /Q target\libs\* target\installer\input\libs\
+xcopy /S /Q %APP_DIR%* %INSTALL_DIR%\input\libs\
 rem copy target\%MAIN_JAR% target\installer\input\libs\
 
 rem ------ REQUIRED MODULES ---------------------------------------------------
@@ -44,9 +54,9 @@ echo detecting required modules
   -recursive ^
   --multi-release %JAVA_VERSION% ^
   --ignore-missing-deps ^
-  --module-path "mods;target/installer/input/libs" ^
+  --module-path "mods;%INSTALL_DIR%/input/libs" ^
   --print-module-deps ^
-  target\installer\input\libs\%MAIN_JAR% > temp.txt
+  %INSTALL_DIR%\input\libs\%MAIN_JAR% > temp.txt
 
 set /p detected_modules=<temp.txt
 
@@ -82,7 +92,7 @@ call "%JAVA_HOME%\bin\jlink" ^
   --compress=2 ^
   --strip-debug ^
   --add-modules %detected_modules%%manual_modules% ^
-  --module-path "mods;target/installer/input/libs" ^
+  --module-path "mods;%INSTALL_DIR%/input/libs" ^
   --include-locales=en,de ^
   --output target/java-runtime
 
@@ -92,17 +102,17 @@ rem In the end we will find the package inside the target/installer directory.
 
 call "%JAVA_HOME%\bin\jpackage" ^
   --type %INSTALLER_TYPE% ^
-  --dest target/installer ^
-  --input target/installer/input/libs ^
-  --name JPackageScriptFX ^
-  --main-class fxlauncher.Start ^
+  --dest %INSTALL_DIR% ^
+  --input %INSTALL_DIR%/input/libs ^
+  --name %APP_NAME% ^
+  --main-class %MAIN_CLASS% ^
   --main-jar %MAIN_JAR% ^
   --java-options -Xmx2048m ^
   --runtime-image target/java-runtime ^
-  --icon src/main/logo/windows/duke.ico ^
+  --icon %APP_ICON% ^
   --app-version %APP_VERSION% ^
-  --vendor "ACME Inc." ^
-  --copyright "Copyright © 2019-21 ACME Inc." ^
+  --vendor "%VENDOR%" ^
+  --copyright "Copyright © 2019-21 %VENDOR%" ^
   --win-dir-chooser ^
   --win-shortcut ^
   --win-per-user-install ^

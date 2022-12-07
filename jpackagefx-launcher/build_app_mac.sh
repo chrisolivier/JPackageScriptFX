@@ -9,27 +9,36 @@
 # PROJECT_VERSION: version used in pom.xml, e.g. 1.0-SNAPSHOT
 # APP_VERSION: the application version, e.g. 1.0.0, shown in "about" dialog
 
-# JAVA_VERSION=17
-# MAIN_JAR="main-ui-$PROJECT_VERSION.jar"
+MAIN_JAR="fxlauncher.jar"
+MAIN_CLASS="fxlauncher.Start"
 
 # Set desired installer type: "dmg", "pkg".
-# INSTALLER_TYPE=pkg
 
-echo "java home: $JAVA_HOME"
-echo "project version: $PROJECT_VERSION"
-echo "app version: $APP_VERSION"
-echo "main JAR file: $MAIN_JAR"
+echo "java home			: $JAVA_HOME"
+echo "java version		: $JAVA_VERSION"
+echo "intaller type		: $INSTALLER_TYPE"
+echo "app name			: $APP_NAME"
+echo "app dir			: $APP_DIR"
+echo "install dir		: $INSTALL_DIR"
+echo "app icon			: $APP_ICON"
+echo "project version	: $PROJECT_VERSION"
+echo "app version		: $APP_VERSION"
+echo "main JAR file		: $MAIN_JAR"
+echo "main JAR file		: $MAIN_CLASS"
+echo "vendor			: $VENDOR"
+echo "package identifier: $PKG_IDENTIFIER"
+echo "package name		: $PKG_NAME"
 
 # ------ SETUP DIRECTORIES AND FILES ----------------------------------------
 # Remove previously generated java runtime and installers. Copy all required
 # jar files into the input/libs folder.
 
 rm -rfd ./target/java-runtime/
-rm -rfd target/installer/
+rm -rfd ${INSTALL_DIR}/
 
-mkdir -p target/installer/input/libs/
+mkdir -p ${INSTALL_DIR}/input/libs/
 
-cp target/libs/* target/installer/input/libs/
+cp ${APP_DIR}/* ${INSTALL_DIR}/input/libs/
 
 # ------ REQUIRED MODULES ---------------------------------------------------
 # Use jlink to detect all modules that are required to run the application.
@@ -37,14 +46,14 @@ cp target/libs/* target/installer/input/libs/
 # application.
 
 echo "detecting required modules"
-detected_modules=`$JAVA_HOME/bin/jdeps \
+detected_modules=`${JAVA_HOME}/bin/jdeps \
   -q \
   -recursive \
   --multi-release ${JAVA_VERSION} \
   --ignore-missing-deps \
   --print-module-deps \
-  --module-path "mods:target/installer/input/libs" \
-  	target/installer/input/libs/${MAIN_JAR}`
+  --module-path "mods:${INSTALL_DIR}/input/libs" \
+  	${INSTALL_DIR}/input/libs/${MAIN_JAR}`
 
 echo "detected modules: ${detected_modules}"
 
@@ -71,14 +80,14 @@ echo "manual modules: ${manual_modules}"
 # works with dependencies that are not fully modularized, yet.
 
 echo "creating java runtime image"
-$JAVA_HOME/bin/jlink \
+${JAVA_HOME}/bin/jlink \
   --strip-native-commands \
   --no-header-files \
   --no-man-pages  \
   --compress=2  \
   --strip-debug \
   --add-modules "${detected_modules}${manual_modules}" \
-  --module-path "mods:target/installer/input/libs" \
+  --module-path "mods:${INSTALL_DIR}/input/libs" \
   --include-locales=en,fr \
   --output target/java-runtime
 
@@ -88,17 +97,17 @@ $JAVA_HOME/bin/jlink \
 echo "Creating installer of type $INSTALLER_TYPE"
 
 $JAVA_HOME/bin/jpackage \
---type $INSTALLER_TYPE \
---dest target/installer \
---input target/installer/input/libs \
---name JPackageScriptFX \
---main-class fxlauncher.Start \
+--type ${INSTALLER_TYPE} \
+--dest ${INSTALL_DIR} \
+--input ${INSTALL_DIR}/input/libs \
+--name ${APP_NAME} \
+--main-class ${MAIN_CLASS} \
 --main-jar ${MAIN_JAR} \
 --java-options -Xmx2048m \
 --runtime-image target/java-runtime \
---icon src/main/logo/macosx/duke.icns \
+--icon ${APP_ICON} \
 --app-version ${APP_VERSION} \
---vendor "ACME Inc." \
---copyright "Copyright © 2019-21 ACME Inc." \
---mac-package-identifier com.acme.app \
---mac-package-name ACME
+--vendor "${VENDOR}" \
+--copyright "Copyright © 2019-21 ${VENDOR}"
+--mac-package-identifier ${PKG_IDENTIFIER} \
+--mac-package-name ${PKG_NAME}
