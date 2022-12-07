@@ -207,8 +207,8 @@
 								<INSTALLER_TYPE>pkg</INSTALLER_TYPE>
 								<MAIN_JAR>fxlauncher.jar</MAIN_JAR>
 								<MAIN_CLASS>fxlauncher.Start</MAIN_CLASS>
-								<APP_VERSION>${client.version}</APP_VERSION>
-								<PROJECT_VERSION>${project.version}</PROJECT_VERSION>
+								<APP_VERSION>${app.version}</APP_VERSION>
+								<PROJECT_VERSION>${app.version}</PROJECT_VERSION>
 							</environmentVariables>
 						</configuration>
 					</plugin>
