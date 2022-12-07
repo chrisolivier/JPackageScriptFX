@@ -108,6 +108,6 @@ $JAVA_HOME/bin/jpackage \
 --icon ${APP_ICON} \
 --app-version ${APP_VERSION} \
 --vendor "${VENDOR}" \
---copyright "Copyright © 2019-21 ${VENDOR}"
+--copyright "Copyright © 2019-21 ${VENDOR}" \
 --mac-package-identifier ${PKG_IDENTIFIER} \
 --mac-package-name ${PKG_NAME}
