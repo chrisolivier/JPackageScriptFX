@@ -9,22 +9,19 @@ rem
 rem PROJECT_VERSION: version used in pom.xml, e.g. 1.0-SNAPSHOT
 rem APP_VERSION: the application version, e.g. 1.0.0, shown in "about" dialog
 
-set MAIN_JAR="fxlauncher.jar"
-set MAIN_CLASS="fxlauncher.Start"
+set MAIN_JAR=fxlauncher.jar
+set MAIN_CLASS=fxlauncher.Start
 
 rem Set desired installer type: "app-image" "msi" "exe".
-
-echo java home: %JAVA_HOME%
-echo project version: %PROJECT_VERSION%
-echo app version: %APP_VERSION%
-echo main JAR file: %MAIN_JAR%
 
 echo "java home			: %JAVA_HOME%"
 echo "java version		: %JAVA_VERSION%"
 echo "intaller type		: %INSTALLER_TYPE%"
 echo "app name			: %APP_NAME%"
 echo "app dir			: %APP_DIR%"
+echo "app dir \			: %APP_DIR:/=\%"
 echo "install dir		: %INSTALL_DIR%"
+echo "install dir \		: %INSTALL_DIR:/=\%"
 echo "app icon			: %APP_ICON%"
 echo "project version	: %PROJECT_VERSION%"
 echo "app version		: %APP_VERSION%"
@@ -37,9 +34,9 @@ rem Remove previously generated java runtime and installers. Copy all required
 rem jar files into the input/libs folder.
 
 IF EXIST target\java-runtime rmdir /S /Q  .\target\java-runtime
-IF EXIST %INSTALL_DIR% rmdir /S /Q %INSTALL_DIR%
-
-xcopy /S /Q %APP_DIR%* %INSTALL_DIR%\input\libs\
+IF EXIST %INSTALL_DIR:/=\% rmdir /S /Q %INSTALL_DIR:/=\%
+rem %string1:,=.%
+xcopy /S /Q %APP_DIR:/=\%\* %INSTALL_DIR:/=\%\input\libs\
 rem copy target\%MAIN_JAR% target\installer\input\libs\
 
 rem ------ REQUIRED MODULES ---------------------------------------------------
@@ -56,7 +53,7 @@ echo detecting required modules
   --ignore-missing-deps ^
   --module-path "mods;%INSTALL_DIR%/input/libs" ^
   --print-module-deps ^
-  %INSTALL_DIR%\input\libs\%MAIN_JAR% > temp.txt
+  %INSTALL_DIR:/=\%/input\libs\%MAIN_JAR% > temp.txt
 
 set /p detected_modules=<temp.txt
 
