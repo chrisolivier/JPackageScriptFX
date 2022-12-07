@@ -233,7 +233,7 @@
 				    <name>native</name>
 				</property>                
             </activation>
-            mvn
+
             <build>
                 <plugins>
                     <plugin>
