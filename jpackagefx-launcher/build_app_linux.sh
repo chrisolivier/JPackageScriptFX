@@ -107,3 +107,6 @@ $JAVA_HOME/bin/jpackage \
 --app-version ${APP_VERSION} \
 --vendor "${VENDOR}" \
 --copyright "Copyright © 2019-21 ${VENDOR}"
+
+echo "Deleting jpackagefx-launcher jar"
+rm target/jpackagefx-launcher*.jar

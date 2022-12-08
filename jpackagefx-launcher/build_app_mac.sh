@@ -111,3 +111,6 @@ $JAVA_HOME/bin/jpackage \
 --copyright "Copyright © 2019-21 ${VENDOR}" \
 --mac-package-identifier ${PKG_IDENTIFIER} \
 --mac-package-name ${PKG_NAME}
+
+echo "Deleting jpackagefx-launcher jar"
+rm target/jpackagefx-launcher*.jar

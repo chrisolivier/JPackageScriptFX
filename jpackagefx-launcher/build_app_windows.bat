@@ -97,6 +97,8 @@ call "%JAVA_HOME%\bin\jlink" ^
 rem ------ PACKAGING ----------------------------------------------------------
 rem In the end we will find the package inside the target/installer directory.
 
+echo "Creating installer of type %INSTALLER_TYPE%"
+
 call "%JAVA_HOME%\bin\jpackage" ^
   --type %INSTALLER_TYPE% ^
   --dest %INSTALL_DIR% ^
@@ -114,3 +116,6 @@ call "%JAVA_HOME%\bin\jpackage" ^
   --win-shortcut ^
   --win-per-user-install ^
   --win-menu
+  
+echo "Deleting jpackagefx-launcher jar"
+del target/jpackagefx-launcher*.jar
