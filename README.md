@@ -1,6 +1,7 @@
 # FORK of JPackageScriptFX #
-A POC to demonstrate how to integrate fxlauncher from Edvin and use scripts from JPackageScriptFX to build self-contained,  
-platform-specific executables and installers of your JavaFX applications with the ability to auto update.  
+A POC to demonstrate how to integrate fxlauncher from Edvin and use scripts from JPackageScriptFX to build  
+self-contained, platform-specific executables and installers of your JavaFX applications with the ability  
+to auto update.  
 
 Documentation of [JPackageScriptFX](https://github.com/dlemmermann/JPackageScriptFX).  
 Documentation of [fxlauncher](https://github.com/edvin/fxlauncher).  
@@ -10,7 +11,8 @@ This POC is based on this fork.
 
 ### How to use
 
-First update the pom of the jpackagefx-main project with your data, this project is a sample that should be replace by your own project.  
+First update the pom of the jpackagefx-main project with your data, this project is a sample that should be  
+replace by your own project.  
 Most important is to update app.url and app.deploy.target properties it's where your app will be stored.  
 
 ```bash
@@ -95,4 +97,4 @@ Go to the jpackagefx-launcher project:
 	mvn clean install
 ```
 You will find the installer in jpackagefx-launcher/target/installer/JPackageScriptFX/bin for linux.
-This has to be done for each os linux, win and mac but only once as the launcher will not need to be updated.
+This has to be done for each os, linux, win and mac but only once as the launcher will not need to be updated.
