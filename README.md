@@ -84,7 +84,7 @@ Go to the JPackageScriptFX folder:
 ```bash
 	mvn clean package
 ```
-At this point your app will be ready on the remote folder.
+At this point your app will be ready on your remote folder.
 
 
 ##### Then generate the launcher  

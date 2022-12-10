@@ -7,13 +7,6 @@
 	<version>1.0.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<repositories>
-		<repository>
-			<id>ossrh</id>
-			<url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-		</repository>
-	</repositories>
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
